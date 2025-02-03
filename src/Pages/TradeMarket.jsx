@@ -1,11 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, ArrowRight, Tractor, Leaf, TrendingUp, Star, Calendar, ChevronRight, Phone } from 'lucide-react';
+import axios from 'axios';
 
 const TradeMarket = ({ isSidebarOpen }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [filteredEquipment, setFilteredEquipment] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [marketData, setMarketData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Fetch data from API
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/posts/");
+        setMarketData(response.data);
+        setFilteredData(response.data); // Initially show all data
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+    fetchData();
+  }, []);
+
+  // Filter data when category changes
+  useEffect(() => {
+    if (selectedCategory === 'all') {
+      setFilteredData(marketData);
+    } else {
+      setFilteredData(marketData.filter(item => item.category === selectedCategory));
+    }
+  }, [selectedCategory, marketData]);
 
   // Handle window resize
   useEffect(() => {
@@ -24,71 +48,6 @@ const TradeMarket = ({ isSidebarOpen }) => {
     { id: 'seeds', name: 'Seeds', icon: <Leaf className="w-4 h-4 md:w-5 md:h-5" /> },
     { id: 'fertilizers', name: 'Fertilizers', icon: <Leaf className="w-4 h-4 md:w-5 md:h-5" /> }
   ];
-
-  const featuredEquipment = [
-    {
-      image: "https://i.pinimg.com/736x/cc/0b/11/cc0b11209231a85ada8883c9edb5f45b.jpg",
-      title: "John Deere 5310",
-      rate: "₹1200/day",
-      location: "Indore, India",
-      rating: 4.8,
-      reviews: 156,
-      category: "tractors"
-    },
-    {
-      image: "https://s.alicdn.com/@sc04/kf/A48902890a9b14289b59ba8d6e00eeeb8A.jpg",
-      title: "Modern Cultivator",
-      rate: "₹800/day",
-      location: "Ashta, India",
-      rating: 4.6,
-      reviews: 98,
-      category: "tools"
-    },
-    {
-      image: "https://s.alicdn.com/@sc04/kf/Udf0928729c6f40d1a76548a3598635270.jpg",
-      title: "Rotavator",
-      rate: "₹600/day",
-      location: "Dewas, India",
-      rating: 4.7,
-      reviews: 124,
-      category: "tools"
-    }
-  ];
-
-  const popularProducts = [
-    {
-      image: "https://5.imimg.com/data5/EL/YO/MY-16279308/wheat.jpeg",
-      title: "Premium Wheat Seeds",
-      price: "₹2000/quintal",
-      location: "Haryana, India",
-      category: "seeds"
-    },
-    {
-      image: "https://www.agriplexindia.com/cdn/shop/products/Coragen_3_-08.png?v=1679921600",
-      title: "Organic Fertilizer",
-      price: "₹800/bag",
-      location: "UP, India",
-      category: "fertilizers"
-    },
-    {
-      image: "https://images.jdmagicbox.com/quickquotes/images_main/hydraulic-tractor-trolley-372124854-xhmsx.jpg",
-      title: "Modern Trolly",
-      price: "₹700/day",
-      location: "MP, India",
-      category: "tools"
-    }
-  ];
-
-  // Filter function
-  useEffect(() => {
-    if (selectedCategory === 'all') {
-      setFilteredEquipment(featuredEquipment);
-      setFilteredProducts(popularProducts);
-    } else {
-      setFilteredEquipment(featuredEquipment.filter(item => item.category === selectedCategory));
-      setFilteredProducts(popularProducts.filter(item => item.category === selectedCategory));
-    }
-  }, [selectedCategory]);
 
   return (
     <div className={`flex-1 transition-all duration-300 bg-gray-100 min-h-screen pb-20 md:pb-0 
@@ -116,68 +75,31 @@ const TradeMarket = ({ isSidebarOpen }) => {
             </div>
           </div>
 
-          {/* Featured Equipment */}
-          {filteredEquipment.length > 0 && (
+          {/* Market Items Grid */}
+          {filteredData.length > 0 ? (
             <div className="mt-8">
               <div className="flex justify-between items-center mb-4 md:mb-6">
                 <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-800">
-                  Featured Equipment
+                  Available Items
                 </h2>
-                <button className="text-green-600 hover:text-green-700 flex items-center text-sm md:text-base">
-                  View All <ChevronRight className="w-4 h-4 md:w-5 md:h-5 ml-1" />
-                </button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                {filteredEquipment.map((item, idx) => (
-                  <div key={idx} className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
-                    <img src={item.image} alt={item.title} className="w-full h-40 md:h-48 object-cover" />
+                {filteredData.map((item) => (
+                  <div key={item.id} className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
+                    <img 
+                      src={`http://127.0.0.1:8000${item.Poster}`} 
+                      alt={item.title} 
+                      className="w-full h-40 md:h-48 object-cover"
+                    />
                     <div className="p-3 md:p-4">
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="text-base md:text-lg font-semibold">{item.title}</h3>
-                        <div className="flex items-center">
-                          <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                          <span className="ml-1 text-sm">{item.rating}</span>
-                        </div>
                       </div>
-                      <p className="text-green-600 font-bold text-base md:text-lg">{item.rate}</p>
+                      <p className="text-sm text-gray-600 mb-2">{item.Description}</p>
+                      <p className="text-green-600 font-bold text-base md:text-lg">₹{item.RentPrice.toLocaleString()}</p>
                       <div className="flex items-center text-gray-600 text-xs md:text-sm mt-2">
                         <MapPin className="w-4 h-4 mr-1" />
-                        {item.location}
-                      </div>
-                      <div className="flex items-center justify-between mt-4">
-                        <span className="text-xs md:text-sm text-gray-500">{item.reviews} reviews</span>
-                        <button className="px-3 py-1.5 md:px-4 md:py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors">
-                          Rent Now
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Popular Products */}
-          {filteredProducts.length > 0 && (
-            <div className="mt-8 md:mt-12">
-              <div className="flex justify-between items-center mb-4 md:mb-6">
-                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-800">
-                  Popular Products
-                </h2>
-                <button className="text-green-600 hover:text-green-700 flex items-center text-sm md:text-base">
-                  View All <ChevronRight className="w-4 h-4 md:w-5 md:h-5 ml-1" />
-                </button>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                {filteredProducts.map((item, idx) => (
-                  <div key={idx} className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
-                    <img src={item.image} alt={item.title} className="w-full h-40 md:h-48 object-cover" />
-                    <div className="p-3 md:p-4">
-                      <h3 className="text-base md:text-lg font-semibold mb-2">{item.title}</h3>
-                      <p className="text-green-600 font-bold text-base md:text-lg">{item.price}</p>
-                      <div className="flex items-center text-gray-600 text-xs md:text-sm mt-2">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        {item.location}
+                        {item.category}
                       </div>
                       <button className="w-full mt-4 px-3 py-1.5 md:px-4 md:py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors">
                         Contact Seller
@@ -187,10 +109,7 @@ const TradeMarket = ({ isSidebarOpen }) => {
                 ))}
               </div>
             </div>
-          )}
-
-          {/* Show message when no results found */}
-          {filteredEquipment.length === 0 && filteredProducts.length === 0 && (
+          ) : (
             <div className="mt-8 text-center">
               <h3 className="text-lg md:text-xl text-gray-600">No items found for the selected category</h3>
             </div>

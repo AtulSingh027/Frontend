@@ -11,7 +11,8 @@ import {
   Settings,
   HelpCircle,
   LogOut,
-  X
+  X,
+  UserPlus,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -42,13 +43,19 @@ export default function Navbar({ isSidebarOpen, setIsSidebarOpen }) {
     { icon: <ShoppingCart className="w-6 h-6" />, label: 'Market', path: '/TradeMarket' },
     { icon: <Users className="w-6 h-6" />, label: 'Helpers', path: '/Helpers' },
     { icon: <PlusIcon className="w-6 h-6" />, label: 'Create Post', path: '/PostResource' },
-    { icon: <User className="w-6 h-6" />, label: 'Profile', path: '/Profile' },
+    
+    // User Profile
+    { icon: <User className="w-6 h-6" />, label: 'User Profile', path: '/UserProfile' },
   ];
 
   const bottomSidebarItems = [
     { icon: <Settings className="w-6 h-6" />, label: 'Settings', path: '/settings' },
     { icon: <HelpCircle className="w-6 h-6" />, label: 'Help', path: '/help' },
     { icon: <LogOut className="w-6 h-6" />, label: 'Logout', path: '/logout' },
+    { icon: <UserPlus className="w-6 h-6" />, label: 'Sign Up', path: '/SignUp' },
+    { icon: <User className="w-6 h-6" />, label: 'Login', path: '/Login' },
+    // Sign Up
+    { icon: <UserPlus className="w-6 h-6" />, label: 'Sign Up', path: '/SignUp' },
   ];
 
   return (
