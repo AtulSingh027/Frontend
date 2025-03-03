@@ -16,6 +16,7 @@ export default function UserProfile() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [Posts,SetPost] = useState([])
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -58,6 +59,20 @@ export default function UserProfile() {
     setUser(null);
     navigate('/Login');
   };
+
+  //Show User posts in Profile
+  const [posts, setPosts] = useState([]);
+  useEffect(()=>{
+    async function fetchPosts(){
+      const response = await axios.get('http://127.0.0.1:8000/api/posts/')
+      setPosts(response.data)
+
+    }
+    fetchPosts()
+  },[])
+  console.log(posts)
+  
+
 
   if (loading) return <div>Loading...</div>;
   if (!user) return null;

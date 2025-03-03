@@ -14,6 +14,7 @@ const PostResource = ({ isSidebarOpen }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const userId = localStorage.getItem("userId");
 
   const handleCategoryChange = (categoryId) => {
     setSelectedCategory(categoryId);
@@ -29,6 +30,7 @@ const PostResource = ({ isSidebarOpen }) => {
     formData.append("Description", e.target.description.value); // Capitalized to match Django model
     formData.append("RentPrice", parseInt(e.target.RentPrice.value)); // Convert to integer
     formData.append("category", selectedCategory);
+    formData.append("user", userId); // Append userId to formData
 
     // Handle file upload - renamed to match Django model
     const posterFile = e.target["image"]?.files[0];
@@ -58,6 +60,7 @@ const PostResource = ({ isSidebarOpen }) => {
       alert(error.response?.data?.message || "An error occurred while creating the post");
     }
   }
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
